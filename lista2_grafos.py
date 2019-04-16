@@ -39,6 +39,12 @@ class Node(object):
       else:
           print("Conexões de " + self.name + " : ", aux)
 
+# Função auxiliar para resetar todos os valores de no.visited de um grafo,
+# ou seja, todos os nós voltam a estar não-explorados
+def resetVisited(grafo):
+  for no in grafo:
+    no.visited = False
+
 # Função que retorna True se os nós u e v forem adjacentes, 
 # ou False caso contrário 
 def isAdjacent(u, v):
@@ -66,24 +72,33 @@ def BFS(grafo, u):
           y.visited = True
           fila.append(y)
    
-# Busca em profundidade começando em 'u'
-# Até faz a busca (não tenho certeza se de forma correta),
-# mas buga quando todos os vizinhos de um nó já foram visitados...
-def DFS(u):
-  print("\nComeço da iteração:")
-  print("Nó atual: ", u.name)
-  print("u.visited = ", u.visited)
-  u.visited = True
-  print("Agora, ", u.name, " foi marcado como visitado")
-  i = 0
-  while i < len(u.adj):
-    print("Vizinho: ", u.adj[i].name)
-    print("u.adj[",i,"].visited = ", u.adj[i].visited)
-    if u.adj[i].visited == False:
-      print("Valor no momento = ", u.adj[i].value)
-      DFS(u.adj[i])
-    i += 1
-  print("Fim da função:")
+# Busca em profundidade em um grafo que pode ter mais de 1 componente,
+# mas sempre começa a busca do primeiro nó
+def DFS(grafo):
+  for no in grafo:
+    if no.visited is False:
+      DFS_v(grafo, no)
+
+# Busca em profundidade em apenas 1 componente de grafo,
+# começando de qualquer nó 'u'
+def DFS_v(grafo, u):
+  if u not in grafo:
+    print("O nó não está no grafo")
+    return None
+
+  index = 0
+  for i, no in enumerate(grafo):
+    if no == u:
+      no.visited = True
+      index = i
+
+  print(grafo[index].name)
+
+  # Agora, u é visto como grafo[index]
+  
+  for w in grafo[index].adj:
+    if w.visited is False:
+      DFS_v(grafo, w)
 
 # Topological Ordering Algorithm
 # Retorna valores diferentes a cada chamada de função
@@ -112,7 +127,6 @@ def TOA(grafo):
       for o in oredenados:
         nos.append(o.name)
       print("Ordenação Topológica: ", nos)
-      # return ordenados
       break
 
     nao_apontados = saoApontados(g, False, False)
@@ -120,6 +134,9 @@ def TOA(grafo):
     no_alvo = n[0]
     j = j + 1
 
+# Função auxiliar que mostra quais nós são "apontados" (tem vizinhos), ou não
+# Se apontados == True, mostra os nós apontados. Se false, mostra os não apontados (útil na função TOA)
+# Se name == True, retorna uma lista com os nomes dos nós. Se false, retorna uma lista dos objetos do tipo Node
 def saoApontados(grafo, apontados=True, name=True):
   nos_apontados = []
   
@@ -195,8 +212,6 @@ def generateRandomGraph(n_vertices, n_arestas):
     a.showConnex()
   return gra
 
-# grafo_3 = generateRandomGraph(5, 5)
-
 # Criando alguns nós...
 v1 = Node(1, "v1")
 v2 = Node(2, "v2")
@@ -206,6 +221,7 @@ v5 = Node(5, "v5")
 v6 = Node(6, "v6")
 v7 = Node(7, "v7")
 
+# Criando as conexões (arestas)
 v1.setConnex([v4, v5, v7])
 v2.setConnex([v3, v5, v6])
 v3.setConnex([v4, v5])
@@ -217,6 +233,7 @@ v7.setConnex(None)
 # Um grafo é simplesmente uma lista de nós
 grafo = [v1, v2, v3, v4, v5, v6, v7]
 
+# Outro grafo
 x0 = Node(0, "x0")
 x1 = Node(1, "x1")
 x2 = Node(2, "x2")
@@ -232,3 +249,30 @@ x4.setConnex([x0, x1])
 x5.setConnex([x0, x2])
 
 grafo_2 = [x0, x1, x2, x3, x4, x5]
+
+# Novo grafo
+n1 = Node(1, "n1")
+n2 = Node(2, "n2")
+n3 = Node(3, "n3")
+n4 = Node(4, "n4")
+n5 = Node(5, "n5")
+n6 = Node(6, "n6")
+n7 = Node(7, "n7")
+
+n1.setConnex([n2, n4, n5])
+n2.setConnex([n1, n4, n6])
+n3.setConnex([n7])
+n4.setConnex([n1, n2, n5])
+n5.setConnex([n1, n4])
+n6.setConnex([n2])
+n7.setConnex([n3])
+
+grafo_3 = [n1, n2, n3, n4, n5, n6, n7]
+
+DFS(grafo_3)
+resetVisited(grafo_3)
+print(20 * '_')
+DFS_v(grafo_3, n1)
+resetVisited(grafo_3)
+print(20 * '_')
+DFS_v(grafo_3, n4)
