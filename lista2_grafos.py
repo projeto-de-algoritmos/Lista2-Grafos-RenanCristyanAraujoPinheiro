@@ -6,27 +6,42 @@ from random import *
 
 # Cada nó do grafo é um objeto do tipo Node
 class Node(object):
-  def __init__(self, value, name = None, adj = None, visited = False):
+  def __init__(self, value, name = None, adj = None, wgt = None, visited = False):
     self.value = value       # Valor do nó
     self.name = name         # Nome do nó (para facilitar a visualização)
-    self.adj = adj           # Lusta de nós adjacentes
+    self.adj = adj           # Lista de nós adjacentes
+    self.wgt = wgt           # Lista de pesos das arestas
     self.visited = visited   # Diz se o nó já foi visitado ou não
     
   # Método para adcionar as conexões de um nó
-  def setConnex(self, connex = None):
+  def setConnex(self, connex):
     self.adj = connex
 
-  # Método auxiliar para adicionar uma conexão numa lista de conexões
-  def addConnex(self, connex):
-    self.adj.append(connex)
+  # Método para adicionar os pesos das arestas de um nó
+  def setWeights(self, weights):
+    self.wgt = weights
   
+  # Imprime os pesos das arestas de um nó, na ordem em que as arestas
+  # foram adicionadas
+  def showWeights(self):
+    i = 0
+    aux = []
+
+    if self.wgt is None:
+      print("Pesos das arestas de " + self.name + " : ", None)
+
+    else:
+      print("Pesos das arestas de ", self.name, " : ", self.wgt)
+
   # Imprime as conexões do nó. Por padrão imprime os nomes. Para
   # imprimir os valores dos nós adjacentes, usar o parâmetro "value"
   def showConnex(self, mode = None):
     i = 0
     aux = []
-    if self.adj == None:
+   
+    if self.adj is None:
       print("Conexões de " + self.name + " : ", None)
+    
     else:
       while i < len(self.adj):
         if mode == "value":
@@ -34,6 +49,7 @@ class Node(object):
         else:
           aux.append(self.adj[i].name)
         i += 1
+   
       if mode == "value":
           print("Conexões de " + str(self.value) + " : ", aux)
       else:
@@ -167,11 +183,20 @@ def saoApontados(grafo, apontados=True, name=True):
           nomes_dos_nos.append(no)
     return nomes_dos_nos
 
+# Imprime todas as conexões do grafo
 def graphConnex(grafo):
   print(50 * '-')
   print("Todas as conexões do grafo: ")
   for no in grafo:
     no.showConnex()
+  print(50 * '-')
+
+# Imprime os pesos de todas as arestas do grafo
+def graphWeights(grafo):
+  print(50 * '-')
+  print("Todas os pesos do grafo: ")
+  for no in grafo:
+    no.showWeights()
   print(50 * '-')
 
 # Ainda não funciona como esperado :(
@@ -269,10 +294,59 @@ n7.setConnex([n3])
 
 grafo_3 = [n1, n2, n3, n4, n5, n6, n7]
 
-DFS(grafo_3)
-resetVisited(grafo_3)
-print(20 * '_')
-DFS_v(grafo_3, n1)
-resetVisited(grafo_3)
-print(20 * '_')
-DFS_v(grafo_3, n4)
+o2 = Node(2, "o2")
+o3 = Node(3, "o3")
+o5 = Node(5, "o5")
+o7 = Node(7, "o7")
+o8 = Node(8, "o8")
+o9 = Node(9, "o9")
+o10 = Node(10, "o10")
+o11 = Node(11, "o11")
+
+o2.setConnex(None)
+o3.setConnex([o8, o10])
+o5.setConnex([o11])
+o7.setConnex([o8, o11])
+o8.setConnex([o9])
+o9.setConnex(None)
+o10.setConnex(None)
+o11.setConnex([o2, o9])
+
+grafo_4 = [o2, o3, o5, o7, o8, o9, o10, o11]
+
+a1 = Node(1, "a1")
+a2 = Node(2, "a2")
+a3 = Node(3, "a3")
+a4 = Node(4, "a4")
+a5 = Node(5, "a5")
+a6 = Node(6, "a6")
+a7 = Node(7, "a7")
+a8 = Node(8, "a8")
+
+a1.setConnex([a2, a6, a7])
+a2.setConnex([a3])
+a3.setConnex([a5, a8])
+a4.setConnex([a3, a8])
+a5.setConnex([a4, a8])
+a6.setConnex([a3, a5, a7])
+a7.setConnex([a5, a8])
+a8.setConnex(None)
+
+a1.setWeights([9, 14, 15])
+a2.setWeights([23])
+a3.setWeights([2, 19])
+a4.setWeights([6, 6])
+a5.setWeights([11, 16])
+a6.setWeights([18, 30, 5])
+a7.setWeights([20, 44])
+a8.setWeights(None)
+
+grafo_5 = [a1, a2, a3, a4, a5, a6, a7, a8]
+graphConnex(grafo_5)
+graphWeights(grafo_5)
+
+'''
+print("Exemplo de ordenações aleatórias: ")
+for i in range(5):
+  TOA(grafo_4)
+'''
