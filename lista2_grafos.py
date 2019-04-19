@@ -70,23 +70,6 @@ def isAdjacent(u, v):
       return True
     i += 1
   return False
-
-# Busca em largura começando em 'u'
-# Ainda não funcional
-def BFS(grafo, u):
-  g = deepcopy(grafo)
-
-  fila = []
-
-  for no in g:
-    fila.append(no)
-    no.visited = True
-    while len(fila):
-      x = fila.pop(0)
-      for y in x.adj:
-        if y.visited is False:
-          y.visited = True
-          fila.append(y)
    
 # Busca em profundidade em um grafo que pode ter mais de 1 componente,
 # mas sempre começa a busca do primeiro nó
@@ -109,8 +92,6 @@ def DFS_v(grafo, u):
       index = i
 
   print(grafo[index].name)
-
-  # Agora, u é visto como grafo[index]
   
   for w in grafo[index].adj:
     if w.visited is False:
@@ -127,8 +108,6 @@ def TOA(grafo):
 
   oredenados = []
   nos = []
-  # Encontrar esse nó no grafo, remover do grafo
-  # e adicionar em uma lista
   j = 0
   tam = len(g)
 
@@ -158,7 +137,6 @@ def saoApontados(grafo, apontados=True, name=True):
   
   for no in grafo:
     if no.adj is None:
-      # Não tem vizinhos
       continue
     for vizinho in no.adj:
       if vizinho not in nos_apontados:
@@ -199,44 +177,18 @@ def graphWeights(grafo):
     no.showWeights()
   print(50 * '-')
 
-# Ainda não funciona como esperado :(
-def generateRandomGraph(n_vertices, n_arestas):
-  v = [] # Lista de vertices
-  gra = []
+# Mostra o nó mais proximo (ou a aresta com menor peso)
+def closest(node):
+  menor_peso = 10000
 
-  for i in range(n_vertices):
-    value = randint(1, 20)
-    v.append(Node(value, "r"+str(value)))
-    print(v[i].name, "\t", v[i].value)
+  for i, n in enumerate(node.adj):
+    if node.wgt[i] < menor_peso:
+      menor_peso = node.wgt[i]
+      nome = n.name
 
-  # Implementar aqui como conectar os nós criados
-  count = 0
-  while count < n_arestas:
-    a = sample(v, 1)
-    alvo = a[0]
-    if alvo in gra:
-      continue
+  print(nome, menor_peso)
 
-    d = sample(v, 1)
-    destino = d[0]
-
-    if alvo.value == destino.value:
-      continue
-
-    if alvo.adj is None:
-      alvo.setConnex([destino])
-    else:
-      if destino in alvo.adj:
-        continue
-      alvo.addConnex(destino)
-    # alvo.showConnex()
-    count = count + 1
-    gra.append(alvo)
-  
-  for a in gra:
-    a.showConnex()
-  return gra
-
+# Grafo 1
 # Criando alguns nós...
 v1 = Node(1, "v1")
 v2 = Node(2, "v2")
@@ -258,7 +210,7 @@ v7.setConnex(None)
 # Um grafo é simplesmente uma lista de nós
 grafo = [v1, v2, v3, v4, v5, v6, v7]
 
-# Outro grafo
+# Grafo 2
 x0 = Node(0, "x0")
 x1 = Node(1, "x1")
 x2 = Node(2, "x2")
@@ -275,7 +227,7 @@ x5.setConnex([x0, x2])
 
 grafo_2 = [x0, x1, x2, x3, x4, x5]
 
-# Novo grafo
+# Grafo 3
 n1 = Node(1, "n1")
 n2 = Node(2, "n2")
 n3 = Node(3, "n3")
@@ -294,6 +246,7 @@ n7.setConnex([n3])
 
 grafo_3 = [n1, n2, n3, n4, n5, n6, n7]
 
+# Grafo 4
 o2 = Node(2, "o2")
 o3 = Node(3, "o3")
 o5 = Node(5, "o5")
@@ -314,39 +267,80 @@ o11.setConnex([o2, o9])
 
 grafo_4 = [o2, o3, o5, o7, o8, o9, o10, o11]
 
-a1 = Node(1, "a1")
-a2 = Node(2, "a2")
-a3 = Node(3, "a3")
-a4 = Node(4, "a4")
-a5 = Node(5, "a5")
-a6 = Node(6, "a6")
-a7 = Node(7, "a7")
-a8 = Node(8, "a8")
+# Grafo 5
+a1 = Node(1, "Araguari")
+a2 = Node(2, "Araxá")
+a3 = Node(3, "Patos de Minas")
+a4 = Node(4, "Patrocínio")
+a5 = Node(5, "Uberaba")
+a6 = Node(6, "Uberlândia")
+a7 = Node(7, "Belo Horizonte")
 
-a1.setConnex([a2, a6, a7])
-a2.setConnex([a3])
-a3.setConnex([a5, a8])
-a4.setConnex([a3, a8])
-a5.setConnex([a4, a8])
-a6.setConnex([a3, a5, a7])
-a7.setConnex([a5, a8])
-a8.setConnex(None)
+a1.setConnex([a2, a3, a4, a5, a6, a7])
+a2.setConnex([a1, a3, a4, a5, a6, a7])
+a3.setConnex([a1, a2, a4, a5, a6, a7])
+a4.setConnex([a1, a2, a3, a5, a6, a7])
+a5.setConnex([a1, a2, a3, a4, a6, a7])
+a6.setConnex([a1, a2, a3, a4, a5, a7])
+a7.setConnex([a1, a2, a3, a4, a5, a6])
 
-a1.setWeights([9, 14, 15])
-a2.setWeights([23])
-a3.setWeights([2, 19])
-a4.setWeights([6, 6])
-a5.setWeights([11, 16])
-a6.setWeights([18, 30, 5])
-a7.setWeights([20, 44])
-a8.setWeights(None)
+a1.setWeights([213, 215, 146, 133, 41, 571])
+a2.setWeights([213, 189, 116, 124, 186, 374])
+a3.setWeights([215, 189, 73, 242, 217, 417])
+a4.setWeights([146, 116, 73, 173, 148, 426])
+a5.setWeights([133, 124, 242, 173, 107, 494])
+a6.setWeights([41, 186, 217, 148, 107, 556])
+a7.setWeights([571, 374, 417, 426, 494, 556])
 
-grafo_5 = [a1, a2, a3, a4, a5, a6, a7, a8]
-graphConnex(grafo_5)
-graphWeights(grafo_5)
+grafo_5 = [a1, a2, a3, a4, a5, a6, a7]
 
+# Algumas aplicações das funções (É recomendado testar um grafo por execução)
+
+###########################
 '''
+# Grafo 1:
+# graphConnex(grafo)
+# graphWeights(grafo)
+
+# print(isAdjacent(v4, v5))
+# print(isAdjacent(v5, v4))
+'''
+###########################
+'''
+# Grafo 2: 
+graphConnex(grafo_2)
+
+print("Exemplo de ordenações aleatórias: ")
+for i in range(5):
+  TOA(grafo_2)
+'''
+###########################
+'''
+# Grafo 3:
+graphConnex(grafo_3)
+graphWeights(grafo_3)
+
+print("DFS")
+DFS(grafo_3)
+
+resetVisited(grafo_3)
+
+print("DFS_v")
+DFS_v(grafo_3, n4)
+'''
+###########################
+'''
+# Grafo 4:
+graphConnex(grafo_4)
+
 print("Exemplo de ordenações aleatórias: ")
 for i in range(5):
   TOA(grafo_4)
 '''
+###########################
+'''
+# Grafo 5:
+graphConnex(grafo_5)
+graphWeights(grafo_5)
+'''
+###########################
